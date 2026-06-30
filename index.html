@@ -1,103 +1,202 @@
 <!DOCTYPE html>
-<html lang="ha">
+<html lang="en" class="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Khamis AI - OpenRouter</title>
+  <title>Khamis AI</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            'bg-dark': '#0d0d11',
+            'bg-light': '#f5f5f7',
+            'sidebar-dark': '#111118',
+            'sidebar-light': '#ffffff',
+            'border-dark': '#22222a',
+            'border-light': '#e5e5e5',
+            'purple-accent': '#7c3aed'
+          }
+        }
+      }
+    }
+  </script>
   <style>
-    body { 
-      font-family: system-ui, sans-serif; 
-      background: #0f172a; 
-      color: #e2e8f0; 
-      display: flex; 
-      justify-content: center; 
-      align-items: center; 
-      height: 100vh; 
-      margin: 0;
-    }
-    .container { 
-      width: 90%; 
-      max-width: 600px; 
-      background: #1e293b; 
-      padding: 20px; 
-      border-radius: 12px; 
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    }
-    h1 { text-align: center; color: #38bdf8; }
-    textarea { 
-      width: 100%; 
-      height: 120px; 
-      background: #334155; 
-      color: #e2e8f0; 
-      border: 1px solid #475569; 
-      border-radius: 8px; 
-      padding: 10px; 
-      font-size: 16px; 
-      box-sizing: border-box;
-    }
-    button { 
-      width: 100%; 
-      padding: 12px; 
-      background: #38bdf8; 
-      color: #0f172a; 
-      border: none; 
-      border-radius: 8px; 
-      font-size: 16px; 
-      font-weight: bold; 
-      margin-top: 10px; 
-      cursor: pointer;
-    }
-    button:disabled { background: #475569; cursor: not-allowed; }
-    #response { 
-      margin-top: 20px; 
-      background: #334155; 
-      padding: 15px; 
-      border-radius: 8px; 
-      min-height: 50px; 
-      white-space: pre-wrap; /* Don sabbin layi suyi aiki */
-    }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-thumb { background: #444; border-radius: 10px; }
+    .gradient-text { background: linear-gradient(90deg,#60a5fa,#a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
   </style>
 </head>
-<body>
-  <div class="container">
-    <h1>Khamis AI ⚡</h1>
-    <textarea id="prompt" placeholder="Rubuta tambayarka anan... misali: Ka rubuta mini poem na Hausa"></textarea>
-    <button id="sendBtn">Aika</button>
-    <div id="response">Amsa za ta bayyana anan...</div>
+<body class="bg-bg-light dark:bg-bg-dark text-black dark:text-white font-sans transition-colors duration-300">
+
+  <div class="flex h-screen overflow-hidden">
+    <!-- SIDEBAR -->
+    <aside class="hidden md:flex w-64 bg-sidebar-light dark:bg-sidebar-dark border-r border-border-light dark:border-border-dark flex-col p-3">
+      <div class="flex items-center gap-2 font-bold text-lg mb-4">
+        <svg class="w-6 h-6 text-purple-accent" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
+        AI Chat
+      </div>
+
+      <button id="newChatBtn" class="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg py-2 mb-4 font-semibold">+ New Chat</button>
+      
+      <nav class="flex flex-col gap-1 text-sm">
+        <a href="#" class="flex items-center gap-3 p-2 rounded-md bg-gray-200 dark:bg-[#1c1c24]">🏠 Home</a>
+        <a href="#" class="flex items-center gap-3 p-2 rounded-md hover:bg-gray-200 dark:hover:bg-[#1c1c24]">🧭 Explore</a>
+        <a href="#" class="flex items-center gap-3 p-2 rounded-md hover:bg-gray-200 dark:hover:bg-[#1c1c24]">📚 Library</a>
+        <a href="#" class="flex items-center gap-3 p-2 rounded-md hover:bg-gray-200 dark:hover:bg-[#1c1c24]">🧩 Templates</a>
+      </nav>
+
+      <div class="mt-6 text-xs text-gray-500">Chats</div>
+      <div id="chatList" class="flex-1 overflow-y-auto mt-2 text-sm text-gray-400">
+        No recent chats
+      </div>
+
+      <div class="mt-auto bg-gray-100 dark:bg-[#1c1c24] p-3 rounded-lg text-sm">
+        <div class="flex items-center gap-2 mb-2">👑 <b>Go Premium</b></div>
+        <p class="text-xs text-gray-500">Unlock unlimited access</p>
+      </div>
+
+      <div class="flex items-center gap-2 mt-3 p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-[#1c1c24]">
+        <img src="https://ui-avatars.com/api/?name=Guest" class="w-8 h-8 rounded-full">
+        <div>
+          <div class="text-sm font-semibold">Guest User</div>
+          <div class="text-xs bg-purple-accent text-white px-2 rounded-full inline-block">Free</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN CHAT AREA -->
+    <main class="flex-1 flex-col">
+      <!-- TOPBAR -->
+      <div class="flex justify-between md:justify-end items-center p-3 border-b border-border-light dark:border-border-dark">
+        <div class="md:hidden font-bold flex items-center gap-2">
+          <svg class="w-6 h-6 text-purple-accent" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
+          Khamis AI
+        </div>
+        <button id="themeToggle" class="p-2 rounded-md hover:bg-gray-200 dark:hover:bg-[#1c1c24] text-xl">✨</button>
+      </div>
+
+      <!-- CHAT MESSAGES -->
+      <div id="chatBox" class="flex-1 overflow-y-auto p-4 md:p-6 flex-col">
+        <div id="welcome" class="flex flex-col items-center justify-center h-full text-center">
+          <div class="w-12 h-12 bg-gray-200 dark:bg-[#1c1c24] rounded-xl flex items-center justify-center mb-4">
+            <svg class="w-6 h-6 text-purple-accent" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
+          </div>
+          <h1 class="text-2xl md:text-3xl font-bold gradient-text">How can I help you today?</h1>
+          <p class="text-gray-500 mt-2">Ask anything. Get answers, ideas, and more.</p>
+          
+          <div class="flex gap-2 mt-6 flex-wrap justify-center">
+            <button class="quickBtn px-4 py-2 rounded-lg bg-gray-200 dark:bg-[#1c1c24] text-sm">💡 Get ideas</button>
+            <button class="quickBtn px-4 py-2 rounded-lg bg-gray-200 dark:bg-[#1c1c24] text-sm">✍️ Write something</button>
+            <button class="quickBtn px-4 py-2 rounded-lg bg-gray-200 dark:bg-[#1c1c24] text-sm">📊 Analyze data</button>
+            <button class="quickBtn px-4 py-2 rounded-lg bg-gray-200 dark:bg-[#1c1c24] text-sm">{"<>"} Code something</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- INPUT BOX -->
+      <div class="p-4">
+        <div class="max-w-3xl mx-auto bg-gray-100 dark:bg-[#1c1c24] rounded-2xl p-3 border-border-light dark:border-border-dark">
+          <textarea id="userInput" rows="1" placeholder="Message AI..." class="w-full bg-transparent outline-none resize-none"></textarea>
+          <div class="flex justify-between items-center mt-2">
+            <div class="flex items-center gap-2 text-sm text-gray-500">
+              <button class="p-2 hover:bg-gray-300 dark:hover:bg-[#2a2a35] rounded-md">+</button>
+              <select id="modelSelect" class="bg-transparent outline-none">
+                <option>Llama 3.3 70B</option>
+              </select>
+            </div>
+            <button id="sendBtn" class="w-9 h-9 bg-purple-accent rounded-full flex items-center justify-center text-white">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg>
+            </button>
+          </div>
+        </div>
+        <p class="text-xs text-center text-gray-500 mt-2">AI can make mistakes. Consider checking important information.</p>
+      </div>
+    </main>
   </div>
 
-  <script>
-    const promptEl = document.getElementById('prompt');
-    const sendBtn = document.getElementById('sendBtn');
-    const responseEl = document.getElementById('response');
+<script>
+  // THEME: Light / Dark / System
+  const html = document.documentElement;
+  const themeToggle = document.getElementById('themeToggle');
+  let themeMode = localStorage.getItem('theme') || 'system';
 
-    sendBtn.addEventListener('click', async () => {
-      const userPrompt = promptEl.value.trim();
-      if (!userPrompt) return;
+  function applyTheme() {
+    if(themeMode === 'system') {
+      html.classList.toggle('dark', window.matchMedia('(prefers-color-scheme: dark)').matches);
+      themeToggle.textContent = '✨';
+    } else {
+      html.classList.toggle('dark', themeMode === 'dark');
+      themeToggle.textContent = themeMode === 'dark' ? '🌙' : '☀️';
+    }
+  }
+  applyTheme();
 
-      sendBtn.disabled = true;
-      responseEl.textContent = 'AI na tunani...';
+  themeToggle.onclick = () => {
+    themeMode = themeMode === 'dark' ? 'light' : themeMode === 'light' ? 'system' : 'dark';
+    localStorage.setItem('theme', themeMode);
+    applyTheme();
+  }
 
-      try {
-        const res = await fetch('/api/chat', { // <-- WANNAN YANA MAGANA DA `api/chat.js`
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ prompt: userPrompt })
-        });
+  // CHAT LOGIC - CONNECTS TO YOUR /api/chat.js
+  const chatBox = document.getElementById('chatBox');
+  const userInput = document.getElementById('userInput');
+  const sendBtn = document.getElementById('sendBtn');
+  const welcome = document.getElementById('welcome');
+  let messages = [];
 
-        const data = await res.json();
-        
-        if (!res.ok) {
-            throw new Error(data.error || 'Kuskure ya faru');
-        }
+  async function sendMessage() {
+    const prompt = userInput.value.trim();
+    if(!prompt) return;
+    welcome.style.display = 'none';
+    
+    addMsg(prompt, 'user');
+    userInput.value = '';
+    
+    addMsg('Thinking...', 'ai', true);
 
-        responseEl.textContent = data.text;
-      } catch (error) {
-        responseEl.textContent = 'Kuskure: ' + error.message;
-      } finally {
-        sendBtn.disabled = false;
-      }
-    });
-  </script>
+    try {
+      const res = await fetch('/api/chat', { // <-- SAME ENDPOINT, NO CHANGE
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({prompt})
+      });
+      const data = await res.json();
+      removeThinking();
+      addMsg(data.text, 'ai');
+    } catch(e) {
+      removeThinking();
+      addMsg('Error: ' + e.message, 'ai');
+    }
+  }
+
+  function addMsg(text, role, isThinking=false) {
+    const wrapper = document.createElement('div');
+    wrapper.className = `flex w-full my-2 ${role==='user' ? 'justify-end' : 'justify-start'}`;
+    const div = document.createElement('div');
+    div.className = `max-w-[80%] p-3 rounded-2xl ${role==='user' ? 'bg-purple-accent text-white' : 'bg-gray-200 dark:bg-[#1c1c24]'}`;
+    div.textContent = text;
+    if(isThinking) div.id = 'thinking';
+    wrapper.appendChild(div);
+    chatBox.appendChild(wrapper);
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+  function removeThinking() { document.getElementById('thinking')?.remove(); }
+
+  sendBtn.onclick = sendMessage;
+  userInput.addEventListener('keydown', e => { if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); sendMessage(); } });
+  
+  document.querySelectorAll('.quickBtn').forEach(btn => {
+    btn.onclick = () => { userInput.value = btn.textContent; sendMessage(); }
+  });
+
+  document.getElementById('newChatBtn').onclick = () => {
+    chatBox.innerHTML = '';
+    chatBox.appendChild(welcome);
+    welcome.style.display = 'flex';
+  }
+</script>
 </body>
 </html>
