@@ -28,13 +28,13 @@
   </script>
   <style>
     ::-webkit-scrollbar { width: 6px; }
- .dark ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
- .light ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
+.dark ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+.light ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
 .gradient-text { background: linear-gradient(90deg,#60a5fa,#a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     body { font-family: 'Inter', system-ui, sans-serif; }
   </style>
-  <!-- MONETAG ADS SCRIPT - SAKE SAKE DA ZONE ID NAKA NA GASKIYA NAN -->
-  <script src='//libtl.com/sdk.js' data-zone='YOUR-ZONE-ID' data-sdk='show_'></script> 
+  <!-- MONETAG VIGNETTE ADS SCRIPT - ACTIVE NOW -->
+  <script>(function(s){s.dataset.zone='11221437',s.src='https://n6wxm.com/vignette.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script> 
 </head>
 <body class="bg-bg-light dark:bg-bg-dark text-black dark:text-white transition-colors duration-300">
 
@@ -231,20 +231,20 @@
     saveData(); 
   }
 
-  // 3. EARN TASKS - ADS ONLY
+  // 3. EARN TASKS - ADS ONLY VIGNETTE
   const earnModal = document.getElementById('earnModal');
   document.getElementById('earnBtn').onclick = () => earnModal.classList.remove('hidden');
   document.getElementById('earnBtnTop').onclick = () => earnModal.classList.remove('hidden');
   
   window.earnAd = () => {
-    if(typeof show_ === 'function') { 
-      show_().then(() => { 
+    if(typeof window.showVignetteAd === 'function') { 
+      window.showVignetteAd().then(() => { 
         addCredits(EARN_AD_CREDITS); 
         addMsg(`+${EARN_AD_CREDITS} Credits Added! You can chat again now ✅`, 'ai'); 
         earnModal.classList.add('hidden'); 
-      }); 
+      }).catch(() => { alert('Ad failed to load. Try again.'); });
     } else { 
-      alert('Ad system loading... Try again in 3 seconds.'); 
+      alert('Ad system loading... Wait 3 seconds and try again.'); 
     }
   }
   
