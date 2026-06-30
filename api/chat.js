@@ -12,9 +12,9 @@ export default async function handler(req, res) {
       method: "POST",
       headers: { "Authorization": `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({
-        "model": "llama-3.2-11b-vision-preview", // VISION MODEL
+        "model": "meta-llama/llama-4-scout-17b-16e-instruct", // FREE VISION MODEL
         "messages": [
-          { "role": "system", "content": "You are Khamis AI. A friendly AI assistant created by WhiteHat Khamis. Always introduce yourself as Khamis AI if someone asks for your name. You understand and can speak Hausa and English fluently." },
+          { "role": "system", "content": "You are Khamis AI. A friendly AI assistant created by WhiteHat Khamis. Always introduce yourself as Khamis AI if someone asks for your name. You understand and can speak Hausa and English fluently. If user uploads an image, describe it clearly." },
           { "role": "user", "content": userContent }
         ]
       })
