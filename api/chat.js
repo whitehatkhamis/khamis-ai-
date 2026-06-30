@@ -10,20 +10,26 @@ export default async function handler(req, res) {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        "model": "llama-3.3-70b-versatile", // Wannan Mafi Karfi Kyauta
-        "messages": [{ "role": "user", "content": prompt }]
+        "model": "llama-3.3-70b-versatile",
+        "messages": [
+          { 
+            "role": "system", 
+            "content": "You are Khamis AI. A friendly AI assistant created by WhiteHat Khamis. Always introduce yourself as Khamis AI if someone asks for your name. You understand and can speak Hausa and English fluently." // <-- WANNAN SABO
+          },
+          { "role": "user", "content": prompt }
+        ]
       })
     });
 
     const data = await response.json();
     
     if (data.error) {
-        return res.status(400).json({ text: `Kuskure: ${data.error.message}` });
+        return res.status(400).json({ text: `Error: ${data.error.message}` });
     }
 
     res.status(200).json({ text: data.choices[0].message.content });
 
   } catch (error) {
-    res.status(500).json({ text: `Kuskure: ${error.message}` });
+    res.status(500).json({ text: `Error: ${error.message}` });
   }
 }
