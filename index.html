@@ -27,9 +27,9 @@
   </script>
   <style>
     ::-webkit-scrollbar { width: 6px; }
-   .dark ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
-   .light ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
-  .gradient-text { background: linear-gradient(90deg,#60a5fa,#a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .dark ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+  .light ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
+ .gradient-text { background: linear-gradient(90deg,#60a5fa,#a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     body { font-family: 'Inter', system-ui, sans-serif; }
   </style>
   <!-- MONETAG ADS SCRIPT - REPLACE YOUR-ZONE-ID -->
@@ -38,8 +38,8 @@
 <body class="bg-bg-light dark:bg-bg-dark text-black dark:text-white transition-colors duration-300">
 
   <div class="flex h-screen">
-    <!-- SIDEBAR DESKTOP -->
-    <aside class="hidden md:flex w-64 bg-sidebar-light dark:bg-sidebar-dark border-r border-border-light dark:border-border-dark flex-col p-3">
+    <!-- SIDEBAR DESKTOP + MOBILE OVERLAY -->
+    <aside id="sidebar" class="hidden md:flex w-64 bg-sidebar-light dark:bg-sidebar-dark border-r border-border-light dark:border-border-dark flex-col p-3 fixed md:relative z-40 h-full md:h-auto">
       <div class="flex items-center gap-2 font-bold text-lg mb-4">
         <svg class="w-6 h-6 text-purple-accent" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
         Khamis AI
@@ -57,7 +57,7 @@
       <div class="mt-auto p-3 rounded-lg bg-gray-100 dark:bg-card-dark text-sm">
         <div class="flex justify-between font-semibold mb-2">
           <span>Credits: <span id="creditCount">5</span></span>
-          <button id="earnBtn" class="text-purple-accent text-xs font-bold flex items-center gap-1">💰 Earn</button> <!-- EARN MONEY ICON -->
+          <button id="earnBtn" class="text-purple-accent text-xs font-bold flex items-center gap-1">💰 Earn</button>
         </div>
         <button id="premiumBtn" class="w-full text-xs bg-purple-accent text-white py-1.5 rounded-md mt-1 font-semibold">Go Unlimited ₦300</button>
       </div>
@@ -71,18 +71,29 @@
       </div>
     </aside>
 
+    <!-- MOBILE OVERLAY BACKDROP -->
+    <div id="overlay" class="hidden fixed inset-0 bg-black/50 z-30 md:hidden"></div>
+
     <!-- MAIN CHAT AREA -->
-    <main class="flex-1 flex-col h-screen">
+    <main class="flex-1 flex-col h-screen w-full md:ml-0">
       <!-- TOPBAR -->
       <div class="flex justify-between items-center p-3 border-b border-border-light dark:border-border-dark bg-bg-light dark:bg-bg-dark z-20 shrink-0">
         <div class="flex items-center gap-2">
+          <button id="menuBtn" class="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-card-dark md:hidden text-xl">☰</button> <!-- MENU BUTTON FOR MOBILE -->
           <button id="backBtn" class="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-card-dark">⬅️</button>
           <div class="font-bold flex items-center gap-2 text-lg">
             <svg class="w-6 h-6 text-purple-accent" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
             Khamis AI
           </div>
         </div>
-        <button id="themeToggle" class="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-card-dark text-xl" title="Change Theme">✨</button> <!-- LIGHT/DARK/SYSTEM -->
+
+        <!-- RIGHT SIDE BUTTONS: EARN + THEME -->
+        <div class="flex items-center gap-2">
+          <button id="earnBtnTop" class="flex items-center gap-1 px-3 py-1.5 bg-purple-accent text-white text-xs font-bold rounded-full hover:opacity-90">
+            💰 <span id="creditCountTop">5</span>
+          </button>
+          <button id="themeToggle" class="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-card-dark text-xl" title="Change Theme">✨</button>
+        </div>
       </div>
 
       <!-- CHAT MESSAGES - SCROLL AREA ONLY -->
@@ -106,14 +117,14 @@
   </div>
 
   <!-- INPUT BOX - FIXED TO BOTTOM -->
-  <div class="fixed bottom-0 left-0 right-0 md:left-64 p-3 md:p-4 bg-gradient-to-t from-bg-light dark:from-bg-dark via-bg-light/95 dark:via-bg-dark/95 to-transparent z-30">
+  <div class="fixed bottom-0 left-0 right-0 md:left-64 p-3 md:p-4 bg-gradient-to-t from-bg-light dark:from-bg-dark via-bg-light/95 dark:via-bg-dark/95 to-transparent z-20">
     <div class="max-w-3xl mx-auto bg-gray-100 dark:bg-card-dark rounded-2xl p-3 border-border-light dark:border-border-dark shadow-2xl">
       <div id="imagePreview" class="hidden mb-2 relative">
         <img id="previewImg" class="w-20 h-20 object-cover rounded-lg">
         <button id="removeImg" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 text-xs">x</button>
       </div>
       <textarea id="userInput" rows="1" placeholder="Message Khamis AI..." class="w-full bg-transparent outline-none resize-none max-h-40 text-base"></textarea>
-      <div class="flex justify-between items-end mt-2"> <!-- FIXED: items-end for send icon balance -->
+      <div class="flex justify-between items-end mt-2">
         <div class="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
           <input type="file" id="imageUpload" accept="image/*" class="hidden">
           <button id="uploadBtn" class="p-2 hover:bg-gray-200 dark:hover:bg-[#2a2a35] rounded-md">📎</button>
@@ -192,6 +203,7 @@
   }
   function updateUI() {
     document.getElementById('creditCount').textContent = isPremium? '∞' : userData.credits;
+    document.getElementById('creditCountTop').textContent = isPremium? '∞' : userData.credits;
     if(!isPremium && userData.credits <= 0) {
       sendBtn.disabled = true;
       userInput.placeholder = 'Out of credits. Tap Earn +';
@@ -225,6 +237,7 @@
   // 3. EARN TASKS
   const earnModal = document.getElementById('earnModal');
   document.getElementById('earnBtn').onclick = () => earnModal.classList.remove('hidden');
+  document.getElementById('earnBtnTop').onclick = () => earnModal.classList.remove('hidden');
   
   window.earnAd = () => {
     if(typeof show_ === 'function') { show_().then(() => { addCredits(EARN_AD_CREDITS); addMsg(`+${EARN_AD_CREDITS} Credits Added! You can chat again now ✅`, 'ai'); earnModal.classList.add('hidden'); }); } 
@@ -254,7 +267,18 @@
   
   document.getElementById('premiumBtn').onclick = () => window.open('https://paystack.shop/pay/YOUR-LINK'); // REPLACE PAYSTACK LINK
 
-  // 5. CHAT LOGIC
+  // 5. SIDEBAR MOBILE TOGGLE
+  const sidebar = document.getElementById('sidebar');
+  const menuBtn = document.getElementById('menuBtn');
+  const overlay = document.getElementById('overlay');
+  function toggleSidebar() {
+    sidebar.classList.toggle('hidden');
+    overlay.classList.toggle('hidden');
+  }
+  menuBtn.onclick = toggleSidebar;
+  overlay.onclick = toggleSidebar;
+
+  // 6. CHAT LOGIC
   const chatBox = document.getElementById('chatBox');
   const userInput = document.getElementById('userInput');
   const sendBtn = document.getElementById('sendBtn');
