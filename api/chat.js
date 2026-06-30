@@ -1,32 +1,27 @@
 export default async function handler(req, res) {
   try {
-    const { prompt } = req.body;
+    const { prompt, image } = req.body;
     const apiKey = process.env.GROQ_API_KEY;
+
+    const userContent = [{ type: "text", text: prompt || "What is in this image?" }];
+    if (image) {
+      userContent.push({ type: "image_url", image_url: { url: image } });
+    }
 
     const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
-      headers: {
-        "Authorization": `Bearer ${apiKey}`,
-        "Content-Type": "application/json"
-      },
+      headers: { "Authorization": `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({
-        "model": "llama-3.3-70b-versatile",
+        "model": "llama-3.2-11b-vision-preview", // VISION MODEL
         "messages": [
-          { 
-            "role": "system", 
-            "content": "You are Khamis AI. A friendly AI assistant created by WhiteHat Khamis. Always introduce yourself as Khamis AI if someone asks for your name. You understand and can speak Hausa and English fluently." // <-- WANNAN SABO
-          },
-          { "role": "user", "content": prompt }
+          { "role": "system", "content": "You are Khamis AI. A friendly AI assistant created by WhiteHat Khamis. Always introduce yourself as Khamis AI if someone asks for your name. You understand and can speak Hausa and English fluently." },
+          { "role": "user", "content": userContent }
         ]
       })
     });
 
     const data = await response.json();
-    
-    if (data.error) {
-        return res.status(400).json({ text: `Error: ${data.error.message}` });
-    }
-
+    if (data.error) return res.status(400).json({ text: `Error: ${data.error.message}` });
     res.status(200).json({ text: data.choices[0].message.content });
 
   } catch (error) {
