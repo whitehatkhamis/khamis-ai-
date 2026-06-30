@@ -33,8 +33,9 @@
 .gradient-text { background: linear-gradient(90deg,#60a5fa,#a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     body { font-family: 'Inter', system-ui, sans-serif; }
   </style>
-  <!-- MONETAG VIGNETTE ADS SCRIPT - ACTIVE NOW -->
-  <script>(function(s){s.dataset.zone='11221437',s.src='https://n6wxm.com/vignette.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script> 
+  
+  <!-- MONETAG VIGNETTE ADS SCRIPT - CORRECT WAY -->
+  <script src='https://libtl.com/sdk.js' data-zone='11221437' data-sdk='show_9456932'></script> 
 </head>
 <body class="bg-bg-light dark:bg-bg-dark text-black dark:text-white transition-colors duration-300">
 
@@ -216,32 +217,21 @@
     saveData(); 
   }
 
-  // 3. EARN TASKS - FIXED VIGNETTE LOADER
+  // 3. EARN TASKS - FIXED FOR libtl.com SDK
   const earnModal = document.getElementById('earnModal');
   document.getElementById('earnBtn').onclick = () => earnModal.classList.remove('hidden');
   document.getElementById('earnBtnTop').onclick = () => earnModal.classList.remove('hidden');
   
-  window.earnAd = async () => {
-    earnModal.classList.add('hidden'); // Rufe modal da farko
-    addMsg('Loading ad... Please wait 3 seconds ⏳', 'ai');
-    
-    // JIRA HAR SCRIPT YA LOAD
-    let tries = 0;
-    while(typeof window.showVignetteAd!== 'function' && tries < 20) {
-      await new Promise(r => setTimeout(r, 500)); // Jira 0.5s
-      tries++;
-    }
-
-    if(typeof window.showVignetteAd === 'function') { 
-      try {
-        await window.showVignetteAd(); 
+  window.earnAd = () => {
+    earnModal.classList.add('hidden');
+    if(typeof show_9456932 === 'function') { 
+      show_9456932().then(() => { 
         addCredits(EARN_AD_CREDITS); 
         addMsg(`+${EARN_AD_CREDITS} Credits Added! You can chat again now ✅`, 'ai'); 
-      } catch (err) { 
-        addMsg('Ad was closed or failed. Try again.', 'ai'); 
-      }
+      }).catch(() => { addMsg('Ad was closed. Try again.', 'ai'); });
     } else { 
-      addMsg('Ad system failed to load. Refresh the page and try again.', 'ai'); 
+      addMsg('Ad loading... Click Earn again in 2 seconds.', 'ai'); 
+      setTimeout(() => { if(typeof show_9456932 === 'function') earnAd(); }, 2000);
     }
   }
   
@@ -328,7 +318,6 @@
   userInput.addEventListener('input', () => { userInput.style.height = 'auto'; userInput.style.height = userInput.scrollHeight + 'px'; });
   document.querySelectorAll('.quickBtn').forEach(btn => { btn.onclick = () => { userInput.value = btn.textContent.split(' ')[1]; sendMessage(); } });
   document.getElementById('newChatBtn').onclick = () => resetChat();
-  document.getElementById('backBtn').onclick = () => resetChat();
   function resetChat(){ chatBox.innerHTML = ''; chatBox.appendChild(welcome); welcome.style.display = 'flex'; }
   updateUI();
 </script>
