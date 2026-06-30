@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="monetag" content="42e94cbeecd9178f084530b47b65a99d"> <!-- MONETAG VERIFICATION -->
   <title>Khamis AI</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -27,12 +28,12 @@
   </script>
   <style>
     ::-webkit-scrollbar { width: 6px; }
-  .dark ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
-  .light ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
- .gradient-text { background: linear-gradient(90deg,#60a5fa,#a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+ .dark ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+ .light ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
+.gradient-text { background: linear-gradient(90deg,#60a5fa,#a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     body { font-family: 'Inter', system-ui, sans-serif; }
   </style>
-  <!-- MONETAG ADS SCRIPT - REPLACE YOUR-ZONE-ID -->
+  <!-- MONETAG ADS SCRIPT - SAKE SAKE DA ZONE ID NAKA NA GASKIYA NAN -->
   <script src='//libtl.com/sdk.js' data-zone='YOUR-ZONE-ID' data-sdk='show_'></script> 
 </head>
 <body class="bg-bg-light dark:bg-bg-dark text-black dark:text-white transition-colors duration-300">
@@ -79,7 +80,7 @@
       <!-- TOPBAR -->
       <div class="flex justify-between items-center p-3 border-b border-border-light dark:border-border-dark bg-bg-light dark:bg-bg-dark z-20 shrink-0">
         <div class="flex items-center gap-2">
-          <button id="menuBtn" class="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-card-dark md:hidden text-xl">☰</button> <!-- MENU BUTTON FOR MOBILE -->
+          <button id="menuBtn" class="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-card-dark md:hidden text-xl">☰</button>
           <button id="backBtn" class="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-card-dark">⬅️</button>
           <div class="font-bold flex items-center gap-2 text-lg">
             <svg class="w-6 h-6 text-purple-accent" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
@@ -139,14 +140,12 @@
     </div>
   </div>
 
-  <!-- EARN MODAL -->
+  <!-- EARN MODAL - ADS ONLY -->
   <div id="earnModal" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
     <div class="bg-card-light dark:bg-card-dark rounded-2xl p-5 w-full max-w-sm">
       <h2 class="text-lg font-bold mb-4">Earn Free Credits 💰</h2>
       <div class="space-y-2 text-sm">
         <button onclick="earnAd()" class="w-full text-left p-3 bg-gray-100 dark:bg-[#2a2a35] rounded-lg hover:bg-gray-200 dark:hover:bg-[#333]">📺 Watch Ad +5 Credits</button>
-        <button onclick="inviteFriend()" class="w-full text-left p-3 bg-gray-100 dark:bg-[#2a2a35] rounded-lg hover:bg-gray-200 dark:hover:bg-[#333]">🤝 Invite Friend +10 Credits</button>
-        <button onclick="followChannel()" class="w-full text-left p-3 bg-gray-100 dark:bg-[#2a2a35] rounded-lg hover:bg-gray-200 dark:hover:bg-[#333]">📢 Follow WhatsApp +3 Credits</button>
       </div>
       <button onclick="earnModal.classList.add('hidden')" class="w-full mt-4 p-2 bg-gray-200 dark:bg-[#333] rounded-lg">Close</button>
     </div>
@@ -179,13 +178,11 @@
   // 2. MONEY SYSTEM
   const FREE_START_CREDITS = 5;
   const EARN_AD_CREDITS = 5;
-  const EARN_INVITE_CREDITS = 10;
   const PHOTO_COST = 2;
 
   let userData = JSON.parse(localStorage.getItem('khamisAI_v6')) || { 
     credits: FREE_START_CREDITS, 
     date: new Date().toDateString(),
-    invited: [],
     isPremium: false,
     limitMessageShown: false
   };
@@ -217,7 +214,7 @@
     const cost = isImg? PHOTO_COST : 1;
     if(userData.credits < cost) {
       if(!userData.limitMessageShown) {
-        addMsg("You’ve reached your daily limit. Tap Earn + above to do a task and get more credits ehh 💰", 'ai');
+        addMsg("You’ve reached your daily limit. Tap Earn + above to watch an ad and get more credits ehh 💰", 'ai');
         userData.limitMessageShown = true;
         saveData();
       }
@@ -234,40 +231,26 @@
     saveData(); 
   }
 
-  // 3. EARN TASKS
+  // 3. EARN TASKS - ADS ONLY
   const earnModal = document.getElementById('earnModal');
   document.getElementById('earnBtn').onclick = () => earnModal.classList.remove('hidden');
   document.getElementById('earnBtnTop').onclick = () => earnModal.classList.remove('hidden');
   
   window.earnAd = () => {
-    if(typeof show_ === 'function') { show_().then(() => { addCredits(EARN_AD_CREDITS); addMsg(`+${EARN_AD_CREDITS} Credits Added! You can chat again now ✅`, 'ai'); earnModal.classList.add('hidden'); }); } 
-    else { alert('Ad system loading... Try again.'); }
-  }
-  window.inviteFriend = () => {
-    const myLink = `${window.location.origin}?ref=${Math.random().toString(36).substr(2, 9)}`;
-    navigator.clipboard.writeText(myLink);
-    addMsg('Link copied! Share it. You get +10 Credits when your friend joins 🤝', 'ai');
-  }
-  window.followChannel = () => {
-    window.open('https://whatsapp.com/channel/YOUR_CHANNEL_LINK'); // REPLACE YOUR LINK
-    addCredits(3);
-    addMsg('+3 Credits Added for following ✅', 'ai');
-    earnModal.classList.add('hidden');
-  }
-
-  // 4. REFERRAL
-  const urlParams = new URLSearchParams(window.location.search);
-  const ref = urlParams.get('ref');
-  if(ref &&!userData.invited.includes(ref)) {
-    userData.invited.push(ref);
-    addCredits(EARN_INVITE_CREDITS);
-    addMsg(`Welcome! +${EARN_INVITE_CREDITS} credits from a friend.`, 'ai');
-    window.history.replaceState({}, document.title, "/");
+    if(typeof show_ === 'function') { 
+      show_().then(() => { 
+        addCredits(EARN_AD_CREDITS); 
+        addMsg(`+${EARN_AD_CREDITS} Credits Added! You can chat again now ✅`, 'ai'); 
+        earnModal.classList.add('hidden'); 
+      }); 
+    } else { 
+      alert('Ad system loading... Try again in 3 seconds.'); 
+    }
   }
   
   document.getElementById('premiumBtn').onclick = () => window.open('https://paystack.shop/pay/YOUR-LINK'); // REPLACE PAYSTACK LINK
 
-  // 5. SIDEBAR MOBILE TOGGLE
+  // 4. SIDEBAR MOBILE TOGGLE
   const sidebar = document.getElementById('sidebar');
   const menuBtn = document.getElementById('menuBtn');
   const overlay = document.getElementById('overlay');
@@ -278,7 +261,7 @@
   menuBtn.onclick = toggleSidebar;
   overlay.onclick = toggleSidebar;
 
-  // 6. CHAT LOGIC
+  // 5. CHAT LOGIC
   const chatBox = document.getElementById('chatBox');
   const userInput = document.getElementById('userInput');
   const sendBtn = document.getElementById('sendBtn');
