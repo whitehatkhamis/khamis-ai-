@@ -1,27 +1,23 @@
 export default async function handler(req, res) {
   try {
     const { prompt } = req.body;
-    const apiKey = process.env.OPENROUTER_API_KEY;
+    const apiKey = process.env.GROQ_API_KEY;
 
-    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-        "HTTP-Referer": "https://ai-blue.vercel.app", // TABBATAR URL NAKA NE WANNAN
-        "X-Title": "Khamis AI"
+        "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        "model": "deepseek/deepseek-chat-v3.1:free", 
+        "model": "llama-3.3-70b-versatile", // Wannan Mafi Karfi Kyauta
         "messages": [{ "role": "user", "content": prompt }]
       })
     });
 
     const data = await response.json();
-    console.log(data); // Wannan zai taimaka mana ganin kuskure
-
+    
     if (data.error) {
-        // Idan akwai kuskure daga OpenRouter, aiko shi kai tsaye
         return res.status(400).json({ text: `Kuskure: ${data.error.message}` });
     }
 
