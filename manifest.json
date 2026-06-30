@@ -1,0 +1,16 @@
+{
+  "name": "Khamis AI",
+  "short_name": "KhamisAI",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f0f13",
+  "theme_color": "#7c3aed",
+  "description": "AI Chat with Earn Credits",
+  "icons": [
+    {
+      "src": "https://ui-avatars.com/api/?name=K&background=7c3aed&color=fff&size=512",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
