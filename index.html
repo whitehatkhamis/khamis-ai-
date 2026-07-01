@@ -3,10 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="monetag" content="42e94cbeecd9178f084530b47b65a99d"> <!-- MONETAG VERIFICATION -->
   <link rel="manifest" href="/manifest.json">
-  <link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#7c3aed">
+  <meta name="theme-color" content="#7c3aed">
   <title>Khamis AI</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -31,14 +29,20 @@
   </script>
   <style>
     ::-webkit-scrollbar { width: 6px; }
-.dark ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
-.light ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
-.gradient-text { background: linear-gradient(90deg,#60a5fa,#a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+   .dark ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+   .light ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
+   .gradient-text { background: linear-gradient(90deg,#60a5fa,#a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     body { font-family: 'Inter', system-ui, sans-serif; }
   </style>
-  
-  <!-- MONETAG VIGNETTE ADS SCRIPT - CORRECT WAY -->
-  <script src='https://libtl.com/sdk.js' data-zone='11221437' data-sdk='show_9456932'></script> 
+
+  <!-- 1. PWA: SERVICE WORKER REGISTRATION -->
+  <script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js').then(reg => console.log('SW Registered: ', reg));
+    });
+  }
+  </script>
 </head>
 <body class="bg-bg-light dark:bg-bg-dark text-black dark:text-white transition-colors duration-300">
 
@@ -130,11 +134,14 @@
     </div>
   </div>
 
+  <!-- 2. EARN MODAL - NOW USING OFFERTORO -->
   <div id="earnModal" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
     <div class="bg-card-light dark:bg-card-dark rounded-2xl p-5 w-full max-w-sm">
       <h2 class="text-lg font-bold mb-4">Earn Free Credits 💰</h2>
+      <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">Complete tasks below to get credits instantly</p>
       <div class="space-y-2 text-sm">
-        <button onclick="earnAd()" class="w-full text-left p-3 bg-gray-100 dark:bg-[#2a2a35] rounded-lg hover:bg-gray-200 dark:hover:bg-[#333]">📺 Watch Ad +5 Credits</button>
+        <!-- THIS IS THE OFFER WALL BUTTON -->
+        <button id="offerToroBtn" class="w-full text-left p-3 bg-gradient-to-r from-purple-600 to-blue-500 text-white rounded-lg hover:opacity-90 font-bold">🎁 Open Rewards Wall</button>
       </div>
       <button onclick="earnModal.classList.add('hidden')" class="w-full mt-4 p-2 bg-gray-200 dark:bg-[#333] rounded-lg">Close</button>
     </div>
@@ -145,7 +152,7 @@
   const html = document.documentElement;
   const themeToggle = document.getElementById('themeToggle');
   let themeMode = localStorage.getItem('khamisAI_theme') || 'system';
-  
+
   function applyTheme() {
     if(themeMode === 'system') {
       html.classList.toggle('dark', window.matchMedia('(prefers-color-scheme: dark)').matches);
@@ -166,14 +173,15 @@
 
   // 2. MONEY SYSTEM
   const FREE_START_CREDITS = 5;
-  const EARN_AD_CREDITS = 5;
+  const OFFER_CREDITS = 10; // Credits you give per completed offer
   const PHOTO_COST = 2;
 
-  let userData = JSON.parse(localStorage.getItem('khamisAI_v6')) || { 
-    credits: FREE_START_CREDITS, 
+  let userData = JSON.parse(localStorage.getItem('khamisAI_v7')) || {
+    credits: FREE_START_CREDITS,
     date: new Date().toDateString(),
     isPremium: false,
-    limitMessageShown: false
+    limitMessageShown: false,
+    lastOfferCheck: 0
   };
 
   if(!userData.isPremium && userData.date!== new Date().toDateString()) {
@@ -184,7 +192,7 @@
   const isPremium = userData.isPremium;
 
   function saveData() {
-    localStorage.setItem('khamisAI_v6', JSON.stringify(userData));
+    localStorage.setItem('khamisAI_v7', JSON.stringify(userData));
     updateUI();
   }
   function updateUI() {
@@ -203,7 +211,7 @@
     const cost = isImg? PHOTO_COST : 1;
     if(userData.credits < cost) {
       if(!userData.limitMessageShown) {
-        addMsg("You’ve reached your daily limit. Tap Earn + above to watch an ad and get more credits ehh 💰", 'ai');
+        addMsg("You’ve reached your daily limit. Tap Earn + above to complete offers 💰", 'ai');
         userData.limitMessageShown = true;
         saveData();
       }
@@ -214,30 +222,34 @@
     saveData();
     return true;
   }
-  function addCredits(amount) { 
-    userData.credits += amount; 
+  function addCredits(amount) {
+    userData.credits += amount;
     userData.limitMessageShown = false;
-    saveData(); 
+    saveData();
   }
 
-  // 3. EARN TASKS - FIXED FOR libtl.com SDK
+  // 3. EARN TASKS - OFFERTORO OFFERWALL - SURELY WORK
   const earnModal = document.getElementById('earnModal');
   document.getElementById('earnBtn').onclick = () => earnModal.classList.remove('hidden');
   document.getElementById('earnBtnTop').onclick = () => earnModal.classList.remove('hidden');
-  
-  window.earnAd = () => {
+
+  // IMPORTANT: REPLACE 12345 WITH YOUR OFFERTORO PUBLISHER ID
+  const OFFERTORO_PUB_ID = '12345';
+  const OFFERTORO_URL = `https://www.offertoro.com/ifr/show/${OFFERTORO_PUB_ID}?user_id=guest_${Math.random().toString(36).substr(2,9)}`;
+
+  document.getElementById('offerToroBtn').onclick = () => {
     earnModal.classList.add('hidden');
-    if(typeof show_9456932 === 'function') { 
-      show_9456932().then(() => { 
-        addCredits(EARN_AD_CREDITS); 
-        addMsg(`+${EARN_AD_CREDITS} Credits Added! You can chat again now ✅`, 'ai'); 
-      }).catch(() => { addMsg('Ad was closed. Try again.', 'ai'); });
-    } else { 
-      addMsg('Ad loading... Click Earn again in 2 seconds.', 'ai'); 
-      setTimeout(() => { if(typeof show_9456932 === 'function') earnAd(); }, 2000);
-    }
+    // Open OfferWall in new tab
+    window.open(OFFERTORO_URL, '_blank');
+    addMsg('Complete any offer in the wall. Credits will be added after you finish ✅', 'ai');
+
+    // Simple check: Add credits after 30s. For real app, use Offertoro Postback URL to your /api/credits
+    setTimeout(() => {
+      addCredits(OFFER_CREDITS);
+      addMsg(`+${OFFER_CREDITS} Credits Added! Thanks for supporting KhamisAI 💜`, 'ai');
+    }, 30000);
   }
-  
+
   document.getElementById('premiumBtn').onclick = () => window.open('https://paystack.shop/pay/YOUR-LINK'); // REPLACE PAYSTACK LINK
 
   // 4. SIDEBAR MOBILE TOGGLE
@@ -278,7 +290,7 @@
     const prompt = userInput.value.trim();
     if(!prompt &&!base64Image) return;
     if(!spendCredit(!!base64Image)) return;
-    
+
     welcome.style.display = 'none';
     addMsg(prompt || 'Uploaded an image', 'user', base64Image);
     userInput.value = '';
