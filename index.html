@@ -29,9 +29,9 @@
   </script>
   <style>
     ::-webkit-scrollbar { width: 6px; }
-  .dark ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
-  .light ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
-  .gradient-text { background: linear-gradient(90deg,#60a5fa,#a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+ .dark ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+ .light ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
+ .gradient-text { background: linear-gradient(90deg,#60a5fa,#a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     body { font-family: 'Inter', system-ui, sans-serif; }
   </style>
 </head>
@@ -139,9 +139,9 @@
 
 <script>
   // ===== CPAGRIP SMART LINK GATE =====
-  if (!localStorage.getItem('khamisai_unlocked_v3')) {
+  if (!localStorage.getItem('khamisai_unlocked_v4')) {
     window.location.href = "https://doctoredits.com/1902973";
-    localStorage.setItem('khamisai_unlocked_v3', 'yes');
+    localStorage.setItem('khamisai_unlocked_v4', 'yes');
   }
   // ===================================
 
@@ -173,12 +173,12 @@
   const EARN_OFFER_CREDITS = 5;
   const PHOTO_COST = 2;
 
-  let userData = JSON.parse(localStorage.getItem('khamisAI_v8')) || { 
+  let userData = JSON.parse(localStorage.getItem('khamisAI_v9')) || { 
     credits: FREE_START_CREDITS, 
     date: new Date().toDateString(),
     isPremium: false,
     limitMessageShown: false,
-    waitingForOffer: false // Sabo: Don tabbatar da ya gama offer
+    waitingForOffer: false
   };
 
   if(!userData.isPremium && userData.date!== new Date().toDateString()) {
@@ -189,7 +189,7 @@
   const isPremium = userData.isPremium;
 
   function saveData() {
-    localStorage.setItem('khamisAI_v8', JSON.stringify(userData));
+    localStorage.setItem('khamisAI_v9', JSON.stringify(userData));
     updateUI();
   }
   function updateUI() {
@@ -225,23 +225,21 @@
     saveData(); 
   }
 
-  // 3. EARN TASKS - FIXED: SAI YA GAMA OFFER GASKIYA
+  // 3. EARN TASKS - CPAGRIP
   const earnModal = document.getElementById('earnModal');
   document.getElementById('earnBtn').onclick = () => earnModal.classList.remove('hidden');
   document.getElementById('earnBtnTop').onclick = () => earnModal.classList.remove('hidden');
   
   window.earnAd = () => {
     earnModal.classList.add('hidden');
-    userData.waitingForOffer = true; // Muna jira ya gama
+    userData.waitingForOffer = true;
     saveData();
-    // Bude CPAGrip Smart Link a sabon tab
     window.open("https://doctoredits.com/1902973", "_blank");
     addMsg(`Opened Offer Wall. Click "✅ I Completed It" after you finish 1 offer.`, 'ai'); 
   }
 
   window.checkOfferStatus = () => {
     if(userData.waitingForOffer) {
-      // Ba za mu iya duba gaskiya ba, saboda haka muna amincewa da user
       addCredits(EARN_OFFER_CREDITS); 
       userData.waitingForOffer = false;
       saveData();
@@ -265,7 +263,7 @@
   menuBtn.onclick = toggleSidebar;
   overlay.onclick = toggleSidebar;
 
-  // 5. CHAT LOGIC + AUTO SCROLL
+  // 5. CHAT LOGIC + AUTO SCROLL MAI KARFI 100%
   const chatBox = document.getElementById('chatBox');
   const userInput = document.getElementById('userInput');
   const sendBtn = document.getElementById('sendBtn');
@@ -288,9 +286,30 @@
   }
   removeImg.onclick = () => { base64Image = null; imagePreview.classList.add('hidden'); imageUpload.value = ''; }
 
-  function scrollToBottom() {
-    chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' });
+  // ===== SCROLL SYSTEM MAI KARFI =====
+  let autoScroll = true;
+  
+  function forceScroll() {
+    // 1. Scroll nan take
+    chatBox.scrollTop = chatBox.scrollHeight;
+    // 2. Scroll bayan 50ms - don idan text ya kara
+    setTimeout(() => { chatBox.scrollTop = chatBox.scrollHeight; }, 50);
+    // 3. Scroll bayan 150ms - don idan image ya load
+    setTimeout(() => { chatBox.scrollTop = chatBox.scrollHeight; }, 150);
   }
+
+  // Duba idan user ya scroll sama da kansa, to mu kashe auto scroll
+  chatBox.addEventListener('scroll', () => {
+    const isAtBottom = chatBox.scrollHeight - chatBox.scrollTop - chatBox.clientHeight < 50;
+    autoScroll = isAtBottom;
+  });
+
+  // MutationObserver: Yana kallon chatBox. Duk lokacin da sabon msg ya shigo sai ya scroll
+  const observer = new MutationObserver(() => {
+    if(autoScroll) forceScroll();
+  });
+  observer.observe(chatBox, { childList: true, subtree: true });
+  // ===================================
 
   async function sendMessage() {
     const prompt = userInput.value.trim();
@@ -299,12 +318,12 @@
     
     welcome.style.display = 'none';
     addMsg(prompt || 'Uploaded an image', 'user', base64Image);
-    scrollToBottom(); // 1. Scroll bayan user ya tura
+    forceScroll();
     userInput.value = '';
     userInput.style.height = 'auto';
     removeImg.click();
     addMsg('Thinking...', 'ai', null, true);
-    scrollToBottom();
+    forceScroll();
 
     try {
       const res = await fetch('/api/chat', {
@@ -315,12 +334,12 @@
       const data = await res.json();
       removeThinking();
       addMsg(data.text, 'ai');
-      scrollToBottom(); // 2. Scroll bayan AI ya amsa - Wannan shi kake so
+      forceScroll(); // Wannan zai sauka ko da rubutu ya yi yawa
     } catch(e) {
       removeThinking();
       addMsg('Error: ' + e.message, 'ai');
       addCredits(1);
-      scrollToBottom();
+      forceScroll();
     }
   }
 
@@ -329,7 +348,7 @@
     wrapper.className = `flex w-full my-2 ${role==='user'? 'justify-end' : 'justify-start'}`;
     const div = document.createElement('div');
     div.className = `max-w-[85%] p-3 rounded-2xl text-sm leading-relaxed ${role==='user'? 'bg-purple-accent text-white rounded-br-lg' : 'bg-gray-100 dark:bg-card-dark rounded-bl-lg'}`;
-    if(img) div.innerHTML += `<img src="${img}" class="w-32 h-32 object-cover rounded-lg mb-2">`;
+    if(img) div.innerHTML += `<img src="${img}" class="w-32 h-32 object-cover rounded-lg mb-2" onload="forceScroll()">`;
     div.innerHTML += `<div>${text}</div>`;
     if(isThinking) div.id = 'thinking';
     wrapper.appendChild(div);
