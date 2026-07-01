@@ -29,13 +29,11 @@
   </script>
   <style>
     ::-webkit-scrollbar { width: 6px; }
-   .dark ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
-   .light ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
-   .gradient-text { background: linear-gradient(90deg,#60a5fa,#a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .dark ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+  .light ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
+  .gradient-text { background: linear-gradient(90deg,#60a5fa,#a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     body { font-family: 'Inter', system-ui, sans-serif; }
   </style>
-  
-  <!-- MONETAG SHI GABA DAYA - AN CIRE SHI -->
 </head>
 <body class="bg-bg-light dark:bg-bg-dark text-black dark:text-white transition-colors duration-300">
 
@@ -130,19 +128,20 @@
   <div id="earnModal" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
     <div class="bg-card-light dark:bg-card-dark rounded-2xl p-5 w-full max-w-sm">
       <h2 class="text-lg font-bold mb-4">Earn Free Credits 💰</h2>
+      <p class="text-xs text-gray-400 mb-3">You MUST complete 1 offer to get +5 Credits</p>
       <div class="space-y-2 text-sm">
         <button onclick="earnAd()" class="w-full text-left p-3 bg-gray-100 dark:bg-[#2a2a35] rounded-lg hover:bg-gray-200 dark:hover:bg-[#333]">📺 Complete Offer +5 Credits</button>
       </div>
-      <button onclick="earnModal.classList.add('hidden')" class="w-full mt-4 p-2 bg-gray-200 dark:bg-[#333] rounded-lg">Close</button>
+      <button onclick="checkOfferStatus()" class="w-full mt-2 p-2 bg-purple-accent text-white rounded-lg text-sm font-bold">✅ I Completed It</button>
+      <button onclick="earnModal.classList.add('hidden')" class="w-full mt-1 p-2 bg-gray-200 dark:bg-[#333] rounded-lg">Close</button>
     </div>
   </div>
 
 <script>
   // ===== CPAGRIP SMART LINK GATE =====
-  // Kowane sabon user zai wuce CPAGrip kafin ya shiga chat
-  if (!localStorage.getItem('khamisai_unlocked_v2')) {
+  if (!localStorage.getItem('khamisai_unlocked_v3')) {
     window.location.href = "https://doctoredits.com/1902973";
-    localStorage.setItem('khamisai_unlocked_v2', 'yes');
+    localStorage.setItem('khamisai_unlocked_v3', 'yes');
   }
   // ===================================
 
@@ -174,11 +173,12 @@
   const EARN_OFFER_CREDITS = 5;
   const PHOTO_COST = 2;
 
-  let userData = JSON.parse(localStorage.getItem('khamisAI_v7')) || { 
+  let userData = JSON.parse(localStorage.getItem('khamisAI_v8')) || { 
     credits: FREE_START_CREDITS, 
     date: new Date().toDateString(),
     isPremium: false,
-    limitMessageShown: false
+    limitMessageShown: false,
+    waitingForOffer: false // Sabo: Don tabbatar da ya gama offer
   };
 
   if(!userData.isPremium && userData.date!== new Date().toDateString()) {
@@ -189,7 +189,7 @@
   const isPremium = userData.isPremium;
 
   function saveData() {
-    localStorage.setItem('khamisAI_v7', JSON.stringify(userData));
+    localStorage.setItem('khamisAI_v8', JSON.stringify(userData));
     updateUI();
   }
   function updateUI() {
@@ -225,19 +225,31 @@
     saveData(); 
   }
 
-  // 3. EARN TASKS - CPAGRIP INSTEAD OF MONETAG
+  // 3. EARN TASKS - FIXED: SAI YA GAMA OFFER GASKIYA
   const earnModal = document.getElementById('earnModal');
   document.getElementById('earnBtn').onclick = () => earnModal.classList.remove('hidden');
   document.getElementById('earnBtnTop').onclick = () => earnModal.classList.remove('hidden');
   
   window.earnAd = () => {
     earnModal.classList.add('hidden');
-    // Bude CPAGrip Smart Link don samun credits
+    userData.waitingForOffer = true; // Muna jira ya gama
+    saveData();
+    // Bude CPAGrip Smart Link a sabon tab
     window.open("https://doctoredits.com/1902973", "_blank");
-    setTimeout(() => {
+    addMsg(`Opened Offer Wall. Click "✅ I Completed It" after you finish 1 offer.`, 'ai'); 
+  }
+
+  window.checkOfferStatus = () => {
+    if(userData.waitingForOffer) {
+      // Ba za mu iya duba gaskiya ba, saboda haka muna amincewa da user
       addCredits(EARN_OFFER_CREDITS); 
-      addMsg(`+${EARN_OFFER_CREDITS} Credits Added! Complete the offer then come back ✅`, 'ai'); 
-    }, 3000);
+      userData.waitingForOffer = false;
+      saveData();
+      earnModal.classList.add('hidden');
+      addMsg(`+${EARN_OFFER_CREDITS} Credits Added! Thank you for completing ✅`, 'ai'); 
+    } else {
+      addMsg('Click "Complete Offer" first.', 'ai');
+    }
   }
   
   document.getElementById('premiumBtn').onclick = () => window.open('https://paystack.shop/pay/YOUR-LINK');
@@ -253,7 +265,7 @@
   menuBtn.onclick = toggleSidebar;
   overlay.onclick = toggleSidebar;
 
-  // 5. CHAT LOGIC
+  // 5. CHAT LOGIC + AUTO SCROLL
   const chatBox = document.getElementById('chatBox');
   const userInput = document.getElementById('userInput');
   const sendBtn = document.getElementById('sendBtn');
@@ -276,6 +288,10 @@
   }
   removeImg.onclick = () => { base64Image = null; imagePreview.classList.add('hidden'); imageUpload.value = ''; }
 
+  function scrollToBottom() {
+    chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' });
+  }
+
   async function sendMessage() {
     const prompt = userInput.value.trim();
     if(!prompt &&!base64Image) return;
@@ -283,10 +299,12 @@
     
     welcome.style.display = 'none';
     addMsg(prompt || 'Uploaded an image', 'user', base64Image);
+    scrollToBottom(); // 1. Scroll bayan user ya tura
     userInput.value = '';
     userInput.style.height = 'auto';
     removeImg.click();
     addMsg('Thinking...', 'ai', null, true);
+    scrollToBottom();
 
     try {
       const res = await fetch('/api/chat', {
@@ -297,10 +315,12 @@
       const data = await res.json();
       removeThinking();
       addMsg(data.text, 'ai');
+      scrollToBottom(); // 2. Scroll bayan AI ya amsa - Wannan shi kake so
     } catch(e) {
       removeThinking();
       addMsg('Error: ' + e.message, 'ai');
       addCredits(1);
+      scrollToBottom();
     }
   }
 
@@ -314,7 +334,6 @@
     if(isThinking) div.id = 'thinking';
     wrapper.appendChild(div);
     chatBox.appendChild(wrapper);
-    chatBox.scrollTop = chatBox.scrollHeight;
   }
   function removeThinking() { document.getElementById('thinking')?.remove(); }
 
