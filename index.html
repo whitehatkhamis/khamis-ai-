@@ -13,14 +13,10 @@
       theme: {
         extend: {
           colors: {
-            'bg-light': '#f5f5f7',
-            'bg-dark': '#0f0f13',
-            'sidebar-light': '#ffffff',
-            'sidebar-dark': '#111118',
-            'card-light': '#ffffff',
-            'card-dark': '#1c1c24',
-            'border-light': '#e5e5e5',
-            'border-dark': '#22222a',
+            'bg-light': '#f5f5f7', 'bg-dark': '#0f0f13',
+            'sidebar-light': '#ffffff', 'sidebar-dark': '#111118',
+            'card-light': '#ffffff', 'card-dark': '#1c1c24',
+            'border-light': '#e5e5e5', 'border-dark': '#22222a',
             'purple-accent': '#7c3aed'
           }
         }
@@ -39,13 +35,14 @@
   <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js').then(reg => console.log('SW Registered: ', reg));
+      navigator.serviceWorker.register('/sw.js');
     });
   }
   </script>
 </head>
 <body class="bg-bg-light dark:bg-bg-dark text-black dark:text-white transition-colors duration-300">
 
+  <!-- DUK `HTML` NAKA YA KASANCE HAKA -->
   <div class="flex h-screen">
     <aside id="sidebar" class="hidden md:flex w-64 bg-sidebar-light dark:bg-sidebar-dark border-r border-border-light dark:border-border-dark flex-col p-3 fixed md:relative z-40 h-full md:h-auto">
       <div class="flex items-center gap-2 font-bold text-lg mb-4">
@@ -53,11 +50,6 @@
         Khamis AI
       </div>
       <button id="newChatBtn" class="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg py-2 mb-4 font-semibold">+ New Chat</button>
-      <nav class="flex flex-col gap-1 text-sm">
-        <a href="#" class="flex items-center gap-3 p-2 rounded-md bg-gray-100 dark:bg-card-dark">🏠 Home</a>
-        <a href="#" class="flex items-center gap-3 p-2 rounded-md hover:bg-gray-100 dark:hover:bg-card-dark">🧭 Explore</a>
-        <a href="#" class="flex items-center gap-3 p-2 rounded-md hover:bg-gray-100 dark:hover:bg-card-dark">📚 Library</a>
-      </nav>
       <div class="mt-auto p-3 rounded-lg bg-gray-100 dark:bg-card-dark text-sm">
         <div class="flex justify-between font-semibold mb-2">
           <span>Credits: <span id="creditCount">5</span></span>
@@ -65,22 +57,14 @@
         </div>
         <button id="premiumBtn" class="w-full text-xs bg-purple-accent text-white py-1.5 rounded-md mt-1 font-semibold">Go Unlimited ₦300</button>
       </div>
-      <div class="flex items-center gap-2 mt-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-card-dark">
-        <img src="https://ui-avatars.com/api/?name=Guest&background=7c3aed&color=fff" class="w-8 h-8 rounded-full">
-        <div>
-          <div class="text-sm font-semibold">Guest User</div>
-          <div class="text-xs bg-purple-accent text-white px-2 rounded-full inline-block">Free</div>
-        </div>
-      </div>
     </aside>
 
     <div id="overlay" class="hidden fixed inset-0 bg-black/50 z-30 md:hidden"></div>
-
     <main class="flex-1 flex-col h-screen w-full md:ml-0">
-      <div class="flex justify-between items-center p-3 border-b border-border-light dark:border-border-dark bg-bg-light dark:bg-bg-dark z-20 shrink-0">
+      <!-- HEADER & CHATBOX DUK HAKA NE -->
+       <div class="flex justify-between items-center p-3 border-b border-border-light dark:border-border-dark bg-bg-light dark:bg-bg-dark z-20 shrink-0">
         <div class="flex items-center gap-2">
           <button id="menuBtn" class="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-card-dark md:hidden text-xl">☰</button>
-          <button id="backBtn" class="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-card-dark">⬅️</button>
           <div class="font-bold flex items-center gap-2 text-lg">
             <svg class="w-6 h-6 text-purple-accent" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
             Khamis AI
@@ -93,247 +77,139 @@
           <button id="themeToggle" class="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-card-dark text-xl" title="Change Theme">✨</button>
         </div>
       </div>
-
       <div id="chatBox" class="flex-1 overflow-y-auto p-4 md:p-6 pb-32">
         <div id="welcome" class="flex flex-col items-center justify-center h-full text-center pt-10">
-          <div class="w-14 h-14 bg-gray-100 dark:bg-card-dark rounded-2xl flex items-center justify-center mb-4">
-            <svg class="w-8 h-8 text-purple-accent" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
-          </div>
           <h1 class="text-3xl font-bold gradient-text">My name is Khamis AI</h1>
           <p class="text-gray-500 dark:text-gray-400 mt-2">How can I help you today?</p>
-          <div class="flex gap-2 mt-6 flex-wrap justify-center">
-            <button class="quickBtn px-4 py-2 rounded-xl bg-gray-100 dark:bg-card-dark text-sm hover:bg-gray-200 dark:hover:bg-[#2a2a35]">💡 Get ideas</button>
-            <button class="quickBtn px-4 py-2 rounded-xl bg-gray-100 dark:bg-card-dark text-sm hover:bg-gray-200 dark:hover:bg-[#2a2a35]">✍️ Write something</button>
-            <button class="quickBtn px-4 py-2 rounded-xl bg-gray-100 dark:bg-card-dark text-sm hover:bg-gray-200 dark:hover:bg-[#2a2a35]">📊 Analyze data</button>
-            <button class="quickBtn px-4 py-2 rounded-xl bg-gray-100 dark:bg-card-dark text-sm hover:bg-gray-200 dark:hover:bg-[#2a2a35]">🖼️ Upload Photo</button>
-          </div>
         </div>
       </div>
     </main>
   </div>
 
   <div class="fixed bottom-0 left-0 right-0 md:left-64 p-3 md:p-4 bg-gradient-to-t from-bg-light dark:from-bg-dark via-bg-light/95 dark:via-bg-dark/95 to-transparent z-20">
-    <div class="max-w-3xl mx-auto bg-gray-100 dark:bg-card-dark rounded-2xl p-3 border-border-light dark:border-border-dark shadow-2xl">
-      <div id="imagePreview" class="hidden mb-2 relative">
-        <img id="previewImg" class="w-20 h-20 object-cover rounded-lg">
-        <button id="removeImg" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 text-xs">x</button>
-      </div>
+    <div class="max-w-3xl mx-auto bg-gray-100 dark:bg-card-dark rounded-2xl p-3">
       <textarea id="userInput" rows="1" placeholder="Message Khamis AI..." class="w-full bg-transparent outline-none resize-none max-h-40 text-base"></textarea>
-      <div class="flex justify-between items-end mt-2">
-        <div class="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
-          <input type="file" id="imageUpload" accept="image/*" class="hidden">
-          <button id="uploadBtn" class="p-2 hover:bg-gray-200 dark:hover:bg-[#2a2a35] rounded-md">📎</button>
-          <select id="modelSelect" class="bg-transparent outline-none text-xs">
-            <option>llama-4-scout</option>
-          </select>
-        </div>
-        <button id="sendBtn" class="w-10 h-10 bg-purple-accent rounded-full flex items-center justify-center text-white hover:opacity-90 shrink-0 disabled:opacity-50 disabled:cursor-not-allowed">
+      <div class="flex justify-end mt-2">
+        <button id="sendBtn" class="w-10 h-10 bg-purple-accent rounded-full flex items-center justify-center text-white disabled:opacity-50">
           <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg>
         </button>
       </div>
     </div>
   </div>
 
-  <!-- 2. EARN MODAL - NOW USING OFFERTORO -->
+  <!-- 2. EARN MODAL - YANZU DA TOROX -->
   <div id="earnModal" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
     <div class="bg-card-light dark:bg-card-dark rounded-2xl p-5 w-full max-w-sm">
       <h2 class="text-lg font-bold mb-4">Earn Free Credits 💰</h2>
-      <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">Complete tasks below to get credits instantly</p>
+      <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">Complete tasks to get credits instantly</p>
       <div class="space-y-2 text-sm">
-        <!-- THIS IS THE OFFER WALL BUTTON -->
-        <button id="offerToroBtn" class="w-full text-left p-3 bg-gradient-to-r from-purple-600 to-blue-500 text-white rounded-lg hover:opacity-90 font-bold">🎁 Open Rewards Wall</button>
+        <button id="toroxBtn" class="w-full text-left p-3 bg-gradient-to-r from-purple-600 to-blue-500 text-white rounded-lg hover:opacity-90 font-bold">🎁 Open Rewards Wall</button>
       </div>
       <button onclick="earnModal.classList.add('hidden')" class="w-full mt-4 p-2 bg-gray-200 dark:bg-[#333] rounded-lg">Close</button>
     </div>
   </div>
 
 <script>
-  // 1. THEME: LIGHT / DARK / SYSTEM
+  // 1. THEME
   const html = document.documentElement;
   const themeToggle = document.getElementById('themeToggle');
   let themeMode = localStorage.getItem('khamisAI_theme') || 'system';
-
   function applyTheme() {
-    if(themeMode === 'system') {
-      html.classList.toggle('dark', window.matchMedia('(prefers-color-scheme: dark)').matches);
-      html.classList.toggle('light',!window.matchMedia('(prefers-color-scheme: dark)').matches);
-      themeToggle.textContent = '✨';
-    } else {
-      html.classList.toggle('dark', themeMode === 'dark');
-      html.classList.toggle('light', themeMode === 'light');
-      themeToggle.textContent = themeMode === 'dark'? '🌙' : '☀️';
-    }
+    html.classList.toggle('dark', themeMode === 'dark' || (themeMode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches));
+    themeToggle.textContent = themeMode === 'dark'? '🌙' : themeMode === 'light'? '☀️' : '✨';
   }
   applyTheme();
   themeToggle.onclick = () => {
     themeMode = themeMode === 'dark'? 'light' : themeMode === 'light'? 'system' : 'dark';
-    localStorage.setItem('khamisAI_theme', themeMode);
-    applyTheme();
+    localStorage.setItem('khamisAI_theme', themeMode); applyTheme();
   }
 
-  // 2. MONEY SYSTEM
+  // 2. CREDITS SYSTEM
   const FREE_START_CREDITS = 5;
-  const OFFER_CREDITS = 10; // Credits you give per completed offer
-  const PHOTO_COST = 2;
-
-  let userData = JSON.parse(localStorage.getItem('khamisAI_v7')) || {
-    credits: FREE_START_CREDITS,
-    date: new Date().toDateString(),
-    isPremium: false,
-    limitMessageShown: false,
-    lastOfferCheck: 0
-  };
-
-  if(!userData.isPremium && userData.date!== new Date().toDateString()) {
-    userData.credits = FREE_START_CREDITS;
-    userData.date = new Date().toDateString();
-    userData.limitMessageShown = false;
-  }
+  const OFFER_CREDITS = 10;
+  let userData = JSON.parse(localStorage.getItem('khamisAI_v8')) || { credits: FREE_START_CREDITS, date: new Date().toDateString(), isPremium: false, limitMessageShown: false };
+  if(!userData.isPremium && userData.date!== new Date().toDateString()) { userData.credits = FREE_START_CREDITS; userData.date = new Date().toDateString(); userData.limitMessageShown = false; }
   const isPremium = userData.isPremium;
-
-  function saveData() {
-    localStorage.setItem('khamisAI_v7', JSON.stringify(userData));
-    updateUI();
-  }
+  function saveData() { localStorage.setItem('khamisAI_v8', JSON.stringify(userData)); updateUI(); }
   function updateUI() {
     document.getElementById('creditCount').textContent = isPremium? '∞' : userData.credits;
     document.getElementById('creditCountTop').textContent = isPremium? '∞' : userData.credits;
-    if(!isPremium && userData.credits <= 0) {
-      sendBtn.disabled = true;
-      userInput.placeholder = 'Out of credits. Tap Earn +';
-    } else {
-      sendBtn.disabled = false;
-      userInput.placeholder = 'Message Khamis AI...';
-    }
+    sendBtn.disabled = !isPremium && userData.credits <= 0;
+    userInput.placeholder = !isPremium && userData.credits <= 0 ? 'Out of credits. Tap Earn +' : 'Message Khamis AI...';
   }
-  function spendCredit(isImg=false) {
+  function spendCredit() {
     if(isPremium) return true;
-    const cost = isImg? PHOTO_COST : 1;
-    if(userData.credits < cost) {
-      if(!userData.limitMessageShown) {
-        addMsg("You’ve reached your daily limit. Tap Earn + above to complete offers 💰", 'ai');
-        userData.limitMessageShown = true;
-        saveData();
-      }
-      earnModal.classList.remove('hidden');
-      return false;
+    if(userData.credits < 1) {
+      if(!userData.limitMessageShown) { addMsg("Out of credits. Tap Earn + to get more 💰", 'ai'); userData.limitMessageShown = true; saveData(); }
+      earnModal.classList.remove('hidden'); return false;
     }
-    userData.credits -= cost;
-    saveData();
-    return true;
+    userData.credits -= 1; saveData(); return true;
   }
-  function addCredits(amount) {
-    userData.credits += amount;
-    userData.limitMessageShown = false;
-    saveData();
-  }
+  function addCredits(amount) { userData.credits += amount; userData.limitMessageShown = false; saveData(); }
 
-  // 3. EARN TASKS - OFFERTORO OFFERWALL - SURELY WORK
+  // 3. TOROX OFFERWALL - SURELY WORK
   const earnModal = document.getElementById('earnModal');
   document.getElementById('earnBtn').onclick = () => earnModal.classList.remove('hidden');
   document.getElementById('earnBtnTop').onclick = () => earnModal.classList.remove('hidden');
+  
+  // IMPORTANT: SAKE SAKE `App ID` NAKA NAN
+  const TOROX_APP_ID = 'abc123xyz'; // <-- SAKE WANNAN DA NAKA
+  const TOROX_URL = `https://reward.torox.io/wall/${TOROX_APP_ID}?user_id=guest_${Math.random().toString(36).substr(2,9)}`;
 
-  // IMPORTANT: REPLACE 12345 WITH YOUR OFFERTORO PUBLISHER ID
-  const OFFERTORO_PUB_ID = '12345';
-  const OFFERTORO_URL = `https://www.offertoro.com/ifr/show/${OFFERTORO_PUB_ID}?user_id=guest_${Math.random().toString(36).substr(2,9)}`;
-
-  document.getElementById('offerToroBtn').onclick = () => {
+  document.getElementById('toroxBtn').onclick = () => {
     earnModal.classList.add('hidden');
-    // Open OfferWall in new tab
-    window.open(OFFERTORO_URL, '_blank');
-    addMsg('Complete any offer in the wall. Credits will be added after you finish ✅', 'ai');
-
-    // Simple check: Add credits after 30s. For real app, use Offertoro Postback URL to your /api/credits
-    setTimeout(() => {
-      addCredits(OFFER_CREDITS);
-      addMsg(`+${OFFER_CREDITS} Credits Added! Thanks for supporting KhamisAI 💜`, 'ai');
-    }, 30000);
+    window.open(TOROX_URL, '_blank'); // Bude `Torox Wall` a sabon `tab`
+    addMsg('Complete any offer. Credits will be added after you finish ✅', 'ai');
+    
+    // NOTE: Don `100% accurate`, sai ka saka `Postback URL` a `Torox Dashboard` naka zuwa `/api/torox-postback`
+    // Wannan `setTimeout` na `Demo` ne kawai. 30sec bayan ya bude wall, zai baka `Credits`
+    setTimeout(() => { addCredits(OFFER_CREDITS); addMsg(`+${OFFER_CREDITS} Credits Added! Thanks 💜`, 'ai'); }, 30000);
   }
 
-  document.getElementById('premiumBtn').onclick = () => window.open('https://paystack.shop/pay/YOUR-LINK'); // REPLACE PAYSTACK LINK
+  document.getElementById('premiumBtn').onclick = () => window.open('https://paystack.shop/pay/YOUR-LINK');
 
-  // 4. SIDEBAR MOBILE TOGGLE
+  // 4. SIDEBAR & CHAT LOGIC - GAJERARE
   const sidebar = document.getElementById('sidebar');
   const menuBtn = document.getElementById('menuBtn');
   const overlay = document.getElementById('overlay');
-  function toggleSidebar() {
-    sidebar.classList.toggle('hidden');
-    overlay.classList.toggle('hidden');
-  }
-  menuBtn.onclick = toggleSidebar;
-  overlay.onclick = toggleSidebar;
-
-  // 5. CHAT LOGIC
+  menuBtn.onclick = () => { sidebar.classList.toggle('hidden'); overlay.classList.toggle('hidden'); }
+  overlay.onclick = () => { sidebar.classList.toggle('hidden'); overlay.classList.toggle('hidden'); }
+  
   const chatBox = document.getElementById('chatBox');
   const userInput = document.getElementById('userInput');
   const sendBtn = document.getElementById('sendBtn');
   const welcome = document.getElementById('welcome');
-  const imageUpload = document.getElementById('imageUpload');
-  const uploadBtn = document.getElementById('uploadBtn');
-  const imagePreview = document.getElementById('imagePreview');
-  const previewImg = document.getElementById('previewImg');
-  const removeImg = document.getElementById('removeImg');
-  let base64Image = null;
-
-  uploadBtn.onclick = () => imageUpload.click();
-  imageUpload.onchange = e => {
-    const file = e.target.files[0];
-    if(file) {
-      const reader = new FileReader();
-      reader.onload = () => { base64Image = reader.result; previewImg.src = base64Image; imagePreview.classList.remove('hidden'); }
-      reader.readAsDataURL(file);
-    }
-  }
-  removeImg.onclick = () => { base64Image = null; imagePreview.classList.add('hidden'); imageUpload.value = ''; }
 
   async function sendMessage() {
     const prompt = userInput.value.trim();
-    if(!prompt &&!base64Image) return;
-    if(!spendCredit(!!base64Image)) return;
-
+    if(!prompt) return;
+    if(!spendCredit()) return;
+    
     welcome.style.display = 'none';
-    addMsg(prompt || 'Uploaded an image', 'user', base64Image);
+    addMsg(prompt, 'user');
     userInput.value = '';
-    userInput.style.height = 'auto';
-    removeImg.click();
     addMsg('Thinking...', 'ai', null, true);
-
     try {
-      const res = await fetch('/api/chat', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({prompt, image: base64Image})
-      });
+      const res = await fetch('/api/chat', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({prompt}) });
       const data = await res.json();
-      removeThinking();
-      addMsg(data.text, 'ai');
-    } catch(e) {
-      removeThinking();
-      addMsg('Error: ' + e.message, 'ai');
-      addCredits(1);
-    }
+      removeThinking(); addMsg(data.text, 'ai');
+    } catch(e) { removeThinking(); addMsg('Error: ' + e.message, 'ai'); addCredits(1); }
   }
 
   function addMsg(text, role, img=null, isThinking=false) {
     const wrapper = document.createElement('div');
     wrapper.className = `flex w-full my-2 ${role==='user'? 'justify-end' : 'justify-start'}`;
     const div = document.createElement('div');
-    div.className = `max-w-[85%] p-3 rounded-2xl text-sm leading-relaxed ${role==='user'? 'bg-purple-accent text-white rounded-br-lg' : 'bg-gray-100 dark:bg-card-dark rounded-bl-lg'}`;
-    if(img) div.innerHTML += `<img src="${img}" class="w-32 h-32 object-cover rounded-lg mb-2">`;
-    div.innerHTML += `<div>${text}</div>`;
+    div.className = `max-w-[85%] p-3 rounded-2xl text-sm ${role==='user'? 'bg-purple-accent text-white rounded-br-lg' : 'bg-gray-100 dark:bg-card-dark rounded-bl-lg'}`;
+    div.innerHTML = `<div>${text}</div>`;
     if(isThinking) div.id = 'thinking';
-    wrapper.appendChild(div);
-    chatBox.appendChild(wrapper);
-    chatBox.scrollTop = chatBox.scrollHeight;
+    wrapper.appendChild(div); chatBox.appendChild(wrapper); chatBox.scrollTop = chatBox.scrollHeight;
   }
   function removeThinking() { document.getElementById('thinking')?.remove(); }
 
   sendBtn.onclick = sendMessage;
   userInput.addEventListener('keydown', e => { if(e.key==='Enter' &&!e.shiftKey){ e.preventDefault(); sendMessage(); } });
-  userInput.addEventListener('input', () => { userInput.style.height = 'auto'; userInput.style.height = userInput.scrollHeight + 'px'; });
-  document.querySelectorAll('.quickBtn').forEach(btn => { btn.onclick = () => { userInput.value = btn.textContent.split(' ')[1]; sendMessage(); } });
-  document.getElementById('newChatBtn').onclick = () => resetChat();
-  function resetChat(){ chatBox.innerHTML = ''; chatBox.appendChild(welcome); welcome.style.display = 'flex'; }
+  document.getElementById('newChatBtn').onclick = () => { chatBox.innerHTML = ''; chatBox.appendChild(welcome); welcome.style.display = 'flex'; }
   updateUI();
 </script>
 </body>
