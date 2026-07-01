@@ -3,10 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="monetag" content="42e94cbeecd9178f084530b47b65a99d"> <!-- MONETAG VERIFICATION -->
   <link rel="manifest" href="/manifest.json">
-  <link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#7c3aed">
+  <meta name="theme-color" content="#7c3aed">
   <title>Khamis AI</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -31,14 +29,13 @@
   </script>
   <style>
     ::-webkit-scrollbar { width: 6px; }
-.dark ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
-.light ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
-.gradient-text { background: linear-gradient(90deg,#60a5fa,#a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+   .dark ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+   .light ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
+   .gradient-text { background: linear-gradient(90deg,#60a5fa,#a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     body { font-family: 'Inter', system-ui, sans-serif; }
   </style>
   
-  <!-- MONETAG VIGNETTE ADS SCRIPT - CORRECT WAY -->
-  <script src='https://libtl.com/sdk.js' data-zone='11221437' data-sdk='show_9456932'></script> 
+  <!-- MONETAG SHI GABA DAYA - AN CIRE SHI -->
 </head>
 <body class="bg-bg-light dark:bg-bg-dark text-black dark:text-white transition-colors duration-300">
 
@@ -134,13 +131,21 @@
     <div class="bg-card-light dark:bg-card-dark rounded-2xl p-5 w-full max-w-sm">
       <h2 class="text-lg font-bold mb-4">Earn Free Credits 💰</h2>
       <div class="space-y-2 text-sm">
-        <button onclick="earnAd()" class="w-full text-left p-3 bg-gray-100 dark:bg-[#2a2a35] rounded-lg hover:bg-gray-200 dark:hover:bg-[#333]">📺 Watch Ad +5 Credits</button>
+        <button onclick="earnAd()" class="w-full text-left p-3 bg-gray-100 dark:bg-[#2a2a35] rounded-lg hover:bg-gray-200 dark:hover:bg-[#333]">📺 Complete Offer +5 Credits</button>
       </div>
       <button onclick="earnModal.classList.add('hidden')" class="w-full mt-4 p-2 bg-gray-200 dark:bg-[#333] rounded-lg">Close</button>
     </div>
   </div>
 
 <script>
+  // ===== CPAGRIP SMART LINK GATE =====
+  // Kowane sabon user zai wuce CPAGrip kafin ya shiga chat
+  if (!localStorage.getItem('khamisai_unlocked_v2')) {
+    window.location.href = "https://doctoredits.com/1902973";
+    localStorage.setItem('khamisai_unlocked_v2', 'yes');
+  }
+  // ===================================
+
   // 1. THEME: LIGHT / DARK / SYSTEM
   const html = document.documentElement;
   const themeToggle = document.getElementById('themeToggle');
@@ -166,10 +171,10 @@
 
   // 2. MONEY SYSTEM
   const FREE_START_CREDITS = 5;
-  const EARN_AD_CREDITS = 5;
+  const EARN_OFFER_CREDITS = 5;
   const PHOTO_COST = 2;
 
-  let userData = JSON.parse(localStorage.getItem('khamisAI_v6')) || { 
+  let userData = JSON.parse(localStorage.getItem('khamisAI_v7')) || { 
     credits: FREE_START_CREDITS, 
     date: new Date().toDateString(),
     isPremium: false,
@@ -184,7 +189,7 @@
   const isPremium = userData.isPremium;
 
   function saveData() {
-    localStorage.setItem('khamisAI_v6', JSON.stringify(userData));
+    localStorage.setItem('khamisAI_v7', JSON.stringify(userData));
     updateUI();
   }
   function updateUI() {
@@ -203,7 +208,7 @@
     const cost = isImg? PHOTO_COST : 1;
     if(userData.credits < cost) {
       if(!userData.limitMessageShown) {
-        addMsg("You’ve reached your daily limit. Tap Earn + above to watch an ad and get more credits ehh 💰", 'ai');
+        addMsg("You’ve reached your daily limit. Tap Earn + above to complete an offer and get more credits ehh 💰", 'ai');
         userData.limitMessageShown = true;
         saveData();
       }
@@ -220,25 +225,22 @@
     saveData(); 
   }
 
-  // 3. EARN TASKS - FIXED FOR libtl.com SDK
+  // 3. EARN TASKS - CPAGRIP INSTEAD OF MONETAG
   const earnModal = document.getElementById('earnModal');
   document.getElementById('earnBtn').onclick = () => earnModal.classList.remove('hidden');
   document.getElementById('earnBtnTop').onclick = () => earnModal.classList.remove('hidden');
   
   window.earnAd = () => {
     earnModal.classList.add('hidden');
-    if(typeof show_9456932 === 'function') { 
-      show_9456932().then(() => { 
-        addCredits(EARN_AD_CREDITS); 
-        addMsg(`+${EARN_AD_CREDITS} Credits Added! You can chat again now ✅`, 'ai'); 
-      }).catch(() => { addMsg('Ad was closed. Try again.', 'ai'); });
-    } else { 
-      addMsg('Ad loading... Click Earn again in 2 seconds.', 'ai'); 
-      setTimeout(() => { if(typeof show_9456932 === 'function') earnAd(); }, 2000);
-    }
+    // Bude CPAGrip Smart Link don samun credits
+    window.open("https://doctoredits.com/1902973", "_blank");
+    setTimeout(() => {
+      addCredits(EARN_OFFER_CREDITS); 
+      addMsg(`+${EARN_OFFER_CREDITS} Credits Added! Complete the offer then come back ✅`, 'ai'); 
+    }, 3000);
   }
   
-  document.getElementById('premiumBtn').onclick = () => window.open('https://paystack.shop/pay/YOUR-LINK'); // REPLACE PAYSTACK LINK
+  document.getElementById('premiumBtn').onclick = () => window.open('https://paystack.shop/pay/YOUR-LINK');
 
   // 4. SIDEBAR MOBILE TOGGLE
   const sidebar = document.getElementById('sidebar');
@@ -323,6 +325,11 @@
   document.getElementById('newChatBtn').onclick = () => resetChat();
   function resetChat(){ chatBox.innerHTML = ''; chatBox.appendChild(welcome); welcome.style.display = 'flex'; }
   updateUI();
+
+  // ===== PWA: Register Service Worker =====
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').catch(()=>{});
+  }
 </script>
 </body>
-</html>.
+</html>
